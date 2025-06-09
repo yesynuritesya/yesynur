@@ -1,0 +1,129 @@
+class STNode<T> {
+  T nodeValue;
+  STNode<T>? left, right, parent;
+
+  STNode(this.nodeValue, [this.parent]) {
+    left = null;
+    right = null;
+  }
+
+  STNode.withChildren(this.nodeValue, this.left, this.right) {
+    parent = null;
+  }
+}
+class BinarySearchTree<T extends Comparable> {
+  STNode<T>? root;
+  int treeSize = 0;
+
+  BinarySearchTree() {
+    root = null;
+  }
+
+  bool add(T item) {
+    STNode<T>? t = root;
+    STNode<T>? parent;
+    int orderValue = 0;
+
+    while (t != null) {
+      parent = t;
+      orderValue = item.compareTo(t.nodeValue);
+
+      if (orderValue == 0) {
+        return false;
+      } else if (orderValue < 0) {
+        t = t.left;
+      } else {
+        t = t.right;
+      }
+    }
+
+    STNode<T> newNode = STNode(item, parent);
+    if (parent == null) {
+      root = newNode;
+    } else if (orderValue < 0) {
+      parent.left = newNode;
+    } else {
+      parent.right = newNode;
+    }
+
+    treeSize++;
+    return true;
+  }
+
+  STNode<T>? findNode(T item) {
+    STNode<T>? t = root;
+    int orderValue = 0;
+
+    while (t != null) {
+      orderValue = item.compareTo(t.nodeValue);
+
+      if (orderValue == 0) {
+        return t;
+      } else if (orderValue < 0) {
+        t = t.left;
+      } else {
+        t = t.right;
+      }
+    }
+
+    return null;
+  }
+
+  bool find(T item) {
+    STNode<T>? t = findNode(item);
+
+    if (t != null) {
+      return true;
+    }
+    return false;
+  }
+// MENAMBAHKAN METODE FIRST UNTUK MELAKUKAN PENCARIAN NILAI NODE YANG TERKECIL
+  T? first() {
+  if (root == null) return null; // jika pohon kosong maka retur null artinya tidak ada node 
+
+  STNode<T>? current = root; // membuat variabel current
+  while (current!.left != null) { // selama current.left tidak null maka akan terus berjalan kekiri 
+    current = current.left; // current geser ke anak kiri 
+  } // saat keluar dari proses perulangan berarti current berada di node paling kiri 
+  return current.nodeValue; // jadi current.nodevalue merupakan nilai terkecil dari tree dan kemudian di return
+}
+
+}
+
+void main() {
+  BinarySearchTree<int> bst = BinarySearchTree();
+
+  // Menambahkan node ke BST
+  bst.add(35);
+  bst.add(18);
+  bst.add(25);
+  bst.add(48);
+  bst.add(20);
+
+  print('Tree Size: ${bst.treeSize}');
+
+  // Menggunakan findNode()
+  var node = bst.findNode(5);
+  if (node != null) {
+    print('Node found with value: ${node.nodeValue}');
+  } else {
+    print('Node not found.');
+  }
+
+  // Menggunakan find()
+  bool nodeExists = bst.find(5);
+  if (nodeExists) {
+    print('Node found');
+  } else {
+    print('Node not found.');
+  }
+
+  // Menampilkan nilai terkecil
+var minValue = bst.first(); // memanggil method first untuk mendapatkan nilai terkecil
+if (minValue != null) { 
+  print('\nNilai terkecil di BST adalah: $minValue');
+} else {
+  print('Tree kosong, tidak ada nilai minimum.');
+}
+
+}
