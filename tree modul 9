@@ -1,0 +1,198 @@
+import 'dart:collection';
+import 'dart:ffi';
+import 'dart:io';
+
+// Class Node (TNode)
+class Node {
+  dynamic key;
+  Node? left, right;
+
+  Node(this.key);
+}
+
+// Class BinaryTree
+class BinaryTree {
+  Node? root;
+  
+
+  // Percobaan 1: Membangun Binary Tree secara manual
+  BinaryTree() {
+    root = null;
+  }
+
+  // Percobaan 2: InOrder Traversal
+  void InOrderDisplay(Node? node) {
+    if (node != null) {
+      InOrderDisplay(node.left);
+      print('${node.key} ');
+      InOrderDisplay(node.right);
+    }
+  }
+
+  void printInOrderFromRoot() {
+    InOrderDisplay(root);
+  }
+
+  // Percobaan 3: PreOrder Traversal
+  void PreOrderDisplay(Node? node) {
+    if (node != null) {
+      print('${node.key} ');
+      PreOrderDisplay(node.left);
+      PreOrderDisplay(node.right);
+    }
+  }
+
+  void printPreorderFromRoot() {
+    PreOrderDisplay(root);
+  }
+
+  // Percobaan 4: PostOrder Traversal
+  void PostOrderDisplay(Node? node) {
+    if (node != null) {
+      PostOrderDisplay(node.left);
+      PostOrderDisplay(node.right);
+      print('${node.key} ');
+    }
+  }
+
+  void printPostorderFromRoot() {
+    PostOrderDisplay(root);
+  }
+
+  // Percobaan 5: Menghitung kedalaman Binary Tree
+  int maxDepth(Node? node) {
+    if (node == null) return 0;
+    int lDepth = maxDepth(node.left);
+    int rDepth = maxDepth(node.right);
+    return (lDepth > rDepth ? lDepth : rDepth) + 1;
+  }
+
+  // Percobaan 6: Level Order Traversal
+  void printLevelOrder() {
+    int h = height(root);
+    for (int i = 0; i <= h; i++) {
+      printCurrentLevel(root, i);
+    }
+  }
+
+  int height(Node? root) {
+    if (root == null) return 0;
+    int lheight = height(root.left);
+    int rheight = height(root.right);
+    return lheight > rheight ? lheight + 1 : rheight + 1;
+  }
+
+  void printCurrentLevel(Node? root, int level) {
+    if (root != null) {
+      if (level == 0) {
+        print('${root.key} ');
+      } else if (level >= 1) {
+        printCurrentLevel(root.left, level - 1);
+        printCurrentLevel(root.right, level - 1);
+      }
+    }
+  }
+
+  // Percobaan 7: Menghapus Node
+  void deleteDeepest(Node root, Node delNode) {
+    Queue<Node> q = Queue();
+    q.add(root);
+    Node? temp;
+
+    while (q.isNotEmpty) {
+      temp = q.removeFirst();
+      if (temp == delNode) {
+        temp = null;
+        return;
+      }
+      if (temp.right != null) {
+        if (temp.right == delNode) {
+          temp.right = null;
+          return;
+        } else {
+          q.add(temp.right!);
+        }
+      }
+      if (temp.left != null) {
+        if (temp.left == delNode) {
+          temp.left = null;
+          return;
+        } else {
+          q.add(temp.left!);
+        }
+      }
+    }
+  }
+
+  void delete(Node? root, int key) {
+    if (root == null) return;
+
+    if (root.left == null && root.right == null) {
+      if (root.key == key) {
+        root = null;
+      }
+      return;
+    }
+
+    Queue<Node> q = Queue();
+    q.add(root);
+
+    Node? temp;
+    Node? keyNode;
+
+    while (q.isNotEmpty) {
+      temp = q.removeFirst();
+
+      if (temp.key == key) {
+        keyNode = temp;
+      }
+
+      if (temp.left != null) {
+        q.add(temp.left!);
+      }
+
+      if (temp.right != null) {
+        q.add(temp.right!);
+      }
+    }
+
+    if (keyNode != null && temp != null) {
+      var x = temp.key;
+      deleteDeepest(root, temp);
+      keyNode.key = x;
+    }
+  }
+  
+}
+
+// Fungsi main untuk semua percobaan
+void main() {
+  BinaryTree t = BinaryTree();
+
+  // Percobaan 1: Buat tree secara manual
+  t.root = Node(10);
+  t.root!.left = Node(20);
+  t.root!.right = Node(30);
+  t.root!.right!.left = Node(4);
+
+  print("InOrder ");
+  t.printInOrderFromRoot();
+
+  print("PreOrder ");
+  t.printPreorderFromRoot();
+
+  print("PostOrder");
+  t.printPostorderFromRoot();
+
+  print("Kedalaman Tree");
+  print("${t.maxDepth(t.root)}");
+
+  print("Level Order ");
+  t.printLevelOrder();
+
+  print("Hapus Node dengan nilai 30 ");
+  t.delete(t.root, 30);
+
+  print("Setelah penghapusan node 30 (InOrder):");
+  t.printInOrderFromRoot();
+}
