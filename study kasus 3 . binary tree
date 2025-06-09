@@ -1,0 +1,40 @@
+class TNode {
+  String key;
+  TNode? left, right;
+
+  TNode(this.key);
+}
+
+class BinaryTree {
+  TNode? root;
+
+  BinaryTree();
+}
+
+void preorder(TNode? node, List<String> result) {
+  if (node == null) return;
+  result.add(node.key);
+  preorder(node.left,result);
+  preorder(node.right,result);
+}
+
+void main() {
+  BinaryTree t = BinaryTree();
+  t.root = TNode('+');
+
+  
+  t.root!.left = TNode('*');
+  t.root!.left!.left = TNode('a');
+  t.root!.left!.right = TNode('b');
+
+  t.root!.right = TNode('/');
+  t.root!.right!.right = TNode('e');
+
+  t.root!.right!.left = TNode('-');
+  t.root!.right!.left!.left = TNode('c');
+  t.root!.right!.left!.right = TNode('d');
+
+  List<String> result = [];
+  preorder(t.root, result);
+  print(result.join(' ')); 
+}
